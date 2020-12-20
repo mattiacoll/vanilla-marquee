@@ -1,0 +1,7 @@
+._*
+thumbs.db
+.DS_*
+.ds_*
+node_modules/
+package-lock.json
+pnpm-lock.yaml

@@ -1,0 +1,17 @@
+._*
+thumbs.db
+.DS_*
+.ds_*
+node_modules/
+__tests__/
+.eslintrc.json
+.gitattributes
+.gitignore
+api.md
+babel.config.js
+package-lock.json
+pnpm-lock.yaml
+README.md
+renovate.json
+rollup.config.js
+tsconfig.json
