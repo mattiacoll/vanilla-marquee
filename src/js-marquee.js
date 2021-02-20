@@ -1,4 +1,4 @@
-import { getAttr, byClass, addEvent, removeEvent } from 'matt-utils';
+import { getAttr, byClass, addEvent, removeEvent, remAttr, foreachHTML } from 'matt-utils';
 
 const defOpts = {
   allowCss3Support: true,
@@ -33,6 +33,7 @@ class marquee {
 
     this._loopCount = 3;
 
+    // Check for data-option since they have top priority
     for ( const option in defOpts ) {
 
       let currData = getAttr( el, `data-${defOpts[option]}` );
@@ -48,13 +49,18 @@ class marquee {
 
     }
 
+    // Reintroduce speed as an option. It calculates duration as a factor of the container width
+    // measured in pixels per second.
     if ( opts.speed )
       opts.duration = parseInt( el.clientWidth ) / opts.speed * 1000;
 
+    // no gap if not duplicated
     opts.gap = opts.duplicated ? parseInt( opts.gap ) : 0;
 
+    // wrap inner content into a div
     el.innerHTML = `<div class="js-marquee">${el.innerHTML}</div>`;
 
+    // Make a copy of the element
     const marq = byClass( 'js-marquee', el )[0];
 
     marq.style.marginRight = `${opts.gap}px`;
@@ -63,13 +69,16 @@ class marquee {
     if ( opts.duplicated )
       el.appendChild( marq.cloneNode( true ) );
 
+    // wrap both inner elements into one div
     el.innerHTML = `<div style="width:100000px" class="js-marquee-wrapper">${el.innerHTML}</div>`;
 
+    // Save the reference of the wrapper
     const marqWrap = byClass( 'js-marquee-wrapper', el )[0],
       vertical     = ( opts.direction === 'up' || opts.direction === 'down' );
 
     this._marqWrap = marqWrap;
 
+    // If direction is up or down, get the height of main element
     if ( vertical ) {
 
       const contHeight = el.clientHeight;
@@ -82,11 +91,13 @@ class marquee {
       const marqs = byClass( 'js-marquee', el ),
         marqNums  = marqs.length - 1;
 
+      // Change the CSS for js-marquee element
       foreachHTML( marqs, ( currEl, ind ) => {
 
-        currEl.style.float        = 'none'
-        currEl.style.marginRight  = '0px'
+        currEl.style.float        = 'none';
+        currEl.style.marginRight  = '0px';
 
+        // Remove bottom margin from 2nd element if duplicated
         if ( opts.duplicated && ind === marqNums )
           currEl.style.marginBottom = '0px';
         else
@@ -98,28 +109,37 @@ class marquee {
 
       this._elHeight = el_elHeight;
 
+      // adjust the animation duration according to the text length
       if ( opts.startVisible && !opts.duplicated ) {
+        // Compute the complete animation duration and save it for later reference
+        // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
         this._completeDuration = ( elHeight + contHeight) / parseInt( contHeight ) * opts.duration;
         opts.duration = elHeight / parseInt( contHeight ) * opts.duration;
-      } else
+      } else // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
         opts.duration = elHeight / parseInt( contHeight ) / parseInt( contHeight ) * opts.duration;
 
     } else {
 
+      // Save the width of the each element so we can use it in animation
       const elWidth = parseInt( byClass( 'js-marquee', el )[0].clientWidth + opts.gap ),
         contWidth   = el.clientWidth;
 
       this._contWidth = contWidth;
       this._elWidth   = elWidth;
 
+      // adjust the animation duration according to the text length
       if ( opts.startVisible && !opts.duplicated ) {
+        // Compute the complete animation duration and save it for later reference
+        // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
         this._completeDuration = ( elWidth + contWidth) / parseInt( contWidth ) * opts.duration;
+        // (Width of the text node / width of the main container) * duration
         opts.duration = elWidth / parseInt( contWidth ) * opts.duration;
-      } else
+      } else // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
         opts.duration = elWidth / parseInt( contWidth ) / parseInt( contWidth ) * opts.duration;
 
     }
 
+    // if duplicated then reduce the duration
     if ( opts.duplicated )
       opts.duration = opts.duration / 2;
 
@@ -134,6 +154,7 @@ class marquee {
 
     }
 
+    // if duplicated option is set to true than position the wrapper
     if ( opts.duplicated ) {
 
       if ( vertical ) {
@@ -152,11 +173,13 @@ class marquee {
 
       }
 
+      // If the text starts out visible we can skip the two initial loops
       if ( !opts.startVisible )
         this._loopCount = 1;
 
     } else if ( opts.startVisible ) {
 
+      // We only have two different loops if marquee is duplicated and starts visible
       this._loopCount = 2;
 
     } else {
@@ -166,21 +189,23 @@ class marquee {
         this._repositionHor();
     }
 
+    this.el = el;
+
     if ( opts.pauseOnHover ) {
 
-      addEvent( el, 'mouseover', this.pause().bind( this ) );
-      addEvent( el, 'mouseout', this.resume().bind( this ) );
+      addEvent( this.el, 'mouseover', this.pause().bind( this ) );
+      addEvent( this.el, 'mouseout', this.resume().bind( this ) );
 
     }
 
     if ( opts.allowCss3Support )
-      this._animate( loopCount );
+      this._animate( this._loopCount, vertical );
     else
       this._startAnimationWithDelay();
 
   }
 
-  _animate( loopCount = 0 ) {
+  _animate( loopCount = 0, vertical = false ) {
 
     if ( this._opts.duplicated ) {
       if ( loopCount === 1 ) {
@@ -189,6 +214,15 @@ class marquee {
         
       }
     }
+
+    if ( vertical ) {
+
+    } else {
+
+    }
+
+    // fire event
+    this.el.dispatchEvent( new CustomEvent( 'beforeStarting' ) );
 
   }
 
@@ -219,12 +253,15 @@ class marquee {
 
   }
 
+  /**
+   * Stops all timers and removes events
+   */
   destroy() {
 
     if ( this._opts.pauseOnHover ) {
 
-      removeEvent( el, 'mouseover', this.pause().bind( this ) );
-      removeEvent( el, 'mouseout', this.resume().bind( this ) );
+      removeEvent( this.el, 'mouseover', this.pause().bind( this ) );
+      removeEvent( this.el, 'mouseout', this.resume().bind( this ) );
 
     }
 
