@@ -255,8 +255,10 @@ class marquee {
         this._animStr = `${this._animName} ${duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
 
       // On 2nd loop things back to normal, normal duration for the rest of animations
-      } else if ( this._loopCount === 2 )
+      } else if ( this._loopCount === 2 ) {
+        this._animName = `${this._animName}0`;
         this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
+      }
 
       this._loopCount++;
 
@@ -284,6 +286,7 @@ class marquee {
 
         } else if ( this._loopCount === 3 ) {
 
+          this._animName = `${this._animName}0`;
           this._animStr = `${this._animName} ${this._completeDuration / 1000}s 0s infinite ${opts.css3easing}`;
           this._repositionVert();
 
@@ -298,8 +301,10 @@ class marquee {
     } else {
       if ( opts.duplicated ) {
 
-        if ( this._loopCount > 2 )
+        if ( this._loopCount > 2 ) {
           this._marqWrap.style.transform = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
+          $( this._marqWrap ).css('transform', 'translateX(' + (opts.direction === 'left' ? 0 : '-' + this._elWidth + 'px') + ')');
+        }
 
         animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0 }px)`;
 
@@ -315,6 +320,8 @@ class marquee {
 
         } else if ( this._loopCount === 3 ) {
 
+          // Adjust the animation
+          this._animName = `${this._animName}0`;
           this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
           this._repositionHor();
 
