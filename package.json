@@ -1,0 +1,33 @@
+{
+  "name": "js-marquee",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "rl": "rollup -cw"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattiacoll/js-marquee.git"
+  },
+  "keywords": [
+    "marquee",
+    "jQuery Marquee",
+    "vanillajs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattiacoll/js-marquee/issues"
+  },
+  "homepage": "https://github.com/mattiacoll/js-marquee#readme",
+  "dependencies": {
+    "matt-utils": "^1.4.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "rollup": "^2.39.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}

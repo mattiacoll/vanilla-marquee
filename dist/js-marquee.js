@@ -1,4 +1,27 @@
-import { getAttr, byClass, addEvent, removeEvent, remAttr, forEachHTML, queryAll } from 'matt-utils';
+function byClass(selClass, parent = document) {
+  return parent.getElementsByClassName(selClass);
+}
+function queryAll(selector, parent = document) {
+  return parent.querySelectorAll(selector);
+}
+
+function forEachHTML(els, fn, scope) {
+  for (let i = 0, numEls = els.length; i < numEls; i++) fn.call(scope, els[i], i);
+}
+
+function addEvent(el, ev, fn, opts) {
+  el.addEventListener(ev, fn, opts);
+}
+function removeEvent(el, ev, fn, opts) {
+  el.removeEventListener(ev, fn, opts);
+}
+
+function getAttr(el, attr) {
+  return el.getAttribute(attr);
+}
+function remAttr(el, attr) {
+  el.removeAttribute(attr);
+}
 
 const defOpts = {
   allowCss3Support: true,
@@ -205,7 +228,7 @@ class marquee {
     this._animEnd = () => {
       this._animate( vertical );
       this.el.dispatchEvent( new CustomEvent( 'finished' ) );
-    }
+    };
 
     if ( opts.allowCss3Support )
       this._animate( vertical );
