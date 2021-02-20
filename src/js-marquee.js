@@ -216,14 +216,14 @@ class marquee {
 
   _animate( vertical = false ) {
 
-    if ( this._opts.duplicated ) {
+    const opts = this._opts;
 
-      const opts = this._opts;
+    if ( opts.duplicated ) {
 
       // When duplicated, the first loop will be scroll longer so double the duration
       if ( this._loopCount === 1 ) {
 
-        let duration = this._opts.duration;
+        let duration = opts.duration;
 
         if ( vertical )
           duration = ( opts.direction === 'up' ) ? opts.direction + ( this._contHeight / ( this._elHeight / opts.direction ) ) : opts.direction * 2;
@@ -234,7 +234,7 @@ class marquee {
 
       // On 2nd loop things back to normal, normal duration for the rest of animations
       } else if ( this._loopCount === 2 )
-        this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
+        this._animStr = `${animationName} ${this._completeDuration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
 
       this._loopCount++;
 
@@ -243,9 +243,65 @@ class marquee {
     let animationCss = '';
 
     if ( vertical ) {
+      if ( opts.duplicated ) {
 
+        if ( this._loopCount > 2 )
+          this._marqWrap.style.transfrom = `translateY(${( opts.direction === 'up' ) ? 0 : -1 * this._elHeight}px)`;
+
+        animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : 0 }px)`;
+
+      } else if ( opts.startVisible ) {
+
+        // This loop moves the marquee out of the container
+        if ( this._loopCount === 2 ) {
+
+          this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
+
+          this._loopCount++;
+
+        } else if ( this._loopCount === 3 ) {
+
+          this._animStr = `${animationName} ${this._completeDuration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._repositionVert();
+
+        }
+
+      } else {
+
+        this._repositionVert();
+        animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._marqWrap.clientHeight : this._contHeight}px)`;
+
+      }
     } else {
+      if ( opts.duplicated ) {
 
+        if ( this._loopCount > 2 )
+          this._marqWrap.style.transfrom = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
+
+        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0 }px)`;
+
+      } else if ( opts.startVisible ) {
+
+        // This loop moves the marquee out of the container
+        if ( this._loopCount === 2 ) {
+
+          this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
+
+          this._loopCount++;
+
+        } else if ( this._loopCount === 3 ) {
+
+          this._animStr = `${animationName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._repositionHor();
+
+        }
+
+      } else {
+        this._repositionHor();
+        animationCss = `translateY(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contHeight}px)`;
+      }
     }
 
     // fire event
