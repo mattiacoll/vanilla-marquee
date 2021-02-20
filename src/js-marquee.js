@@ -1,3 +1,5 @@
+import { getAttr, byClass, addEvent, removeEvent } from 'matt-utils';
+
 const defOpts = {
   allowCss3Support: true,
   css3easing:       'linear',
