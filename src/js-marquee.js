@@ -149,10 +149,14 @@ class marquee {
 
     if ( opts.allowCss3Support ) {
 
-      const animationName = animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 );
+      const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 );
       animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
 
+      this._animName = animationName;
+
     }
+
+    this._animStr = animStr;
 
     // if duplicated option is set to true than position the wrapper
     if ( opts.duplicated ) {
@@ -198,22 +202,45 @@ class marquee {
 
     }
 
+    this._animEnd = () => {
+      this._animate( vertical );
+      this.el.dispatchEvent( new CustomEvent( 'finished' ) );
+    }
+
     if ( opts.allowCss3Support )
-      this._animate( this._loopCount, vertical );
+      this._animate( vertical );
     else
       this._startAnimationWithDelay();
 
   }
 
-  _animate( loopCount = 0, vertical = false ) {
+  _animate( vertical = false ) {
 
     if ( this._opts.duplicated ) {
-      if ( loopCount === 1 ) {
-        this._originalDuration = this._opts.duration;
 
-        
-      }
+      const opts = this._opts;
+
+      // When duplicated, the first loop will be scroll longer so double the duration
+      if ( this._loopCount === 1 ) {
+
+        let duration = this._opts.duration;
+
+        if ( vertical )
+          duration = ( opts.direction === 'up' ) ? opts.direction + ( this._contHeight / ( this._elHeight / opts.direction ) ) : opts.direction * 2;
+        else
+          duration = ( opts.direction === 'left' ) ? opts.direction + ( this._contWidth / ( this._elWidth / opts.direction ) ) : opts.direction * 2;
+
+        this._animStr = `${this._animName} ${duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+
+      // On 2nd loop things back to normal, normal duration for the rest of animations
+      } else if ( this._loopCount === 2 )
+        this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
+
+      this._loopCount++;
+
     }
+
+    let animationCss = '';
 
     if ( vertical ) {
 
@@ -224,6 +251,41 @@ class marquee {
     // fire event
     this.el.dispatchEvent( new CustomEvent( 'beforeStarting' ) );
 
+    // Append animation
+    this._marqWrap.style.animation = this._animStr;
+
+    const keyFrameCss = `@${this._animName} {
+      100% {
+        transform: ${animationCss};
+      }
+    }`;
+
+    const styles = queryAll( 'style', this._marqWrap );
+
+    if ( styles.length )
+      styles[styles.length - 1].innerHTML = keyFrameCss;
+    else {
+
+      const styleEl = document.createElement( 'style' );
+      style.innerHTML = keyFrameCss;
+
+      query( 'head' ).appendChild( styleEl );
+
+    }
+
+    addEvent( this._marqWrap, 'animationiteration', this._animIter.bind( this ), {
+      once: true,
+    });
+    addEvent( this._marqWrap, 'animationend', this._animEnd.bind( this ), {
+      once: true,
+    });
+
+    setAttr( this.el, 'data-runningStatus', 'resumed' );
+
+  }
+
+  _animIter() {
+    this.el.dispatchEvent( new CustomEvent( 'finished' ) );
   }
 
   _repositionVert() {
@@ -264,6 +326,13 @@ class marquee {
       removeEvent( this.el, 'mouseout', this.resume().bind( this ) );
 
     }
+
+    removeEvent( this._marqWrap, 'animationiteration', this._animIter.bind( this ), {
+      once: true,
+    });
+    removeEvent( this._marqWrap, 'animationend', this._animEnd.bind( this ), {
+      once: true,
+    });
 
   }
 
