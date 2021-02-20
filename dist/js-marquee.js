@@ -1,6 +1,9 @@
 function byClass(selClass, parent = document) {
   return parent.getElementsByClassName(selClass);
 }
+function query(selector, parent = document) {
+  return parent.querySelector(selector);
+}
 function queryAll(selector, parent = document) {
   return parent.querySelectorAll(selector);
 }
@@ -18,6 +21,9 @@ function removeEvent(el, ev, fn, opts) {
 
 function getAttr(el, attr) {
   return el.getAttribute(attr);
+}
+function setAttr(el, attr, val) {
+  el.setAttribute(attr, val);
 }
 function remAttr(el, attr) {
   el.removeAttribute(attr);
@@ -50,8 +56,8 @@ class marquee {
       throw new Error( 'el cannot be null' );
 
     opts = {
-      ...opts,
       ...defOpts,
+      ...opts,
     };
 
     this._loopCount = 3;
@@ -158,9 +164,9 @@ class marquee {
         // (Width of the text node / width of the main container) * duration
         opts.duration = elWidth / parseInt( contWidth ) * opts.duration;
       } else // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
-        opts.duration = elWidth / parseInt( contWidth ) / parseInt( contWidth ) * opts.duration;
-
+        opts.duration = ( elWidth + parseInt( contWidth ) ) / parseInt( contWidth ) * opts.duration;
     }
+
 
     // if duplicated then reduce the duration
     if ( opts.duplicated )
@@ -168,17 +174,10 @@ class marquee {
 
     this._opts = opts;
 
-    let animStr = '';
+    const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 ),
+      animStr           = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
 
-    if ( opts.allowCss3Support ) {
-
-      const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 );
-      animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
-
-      this._animName = animationName;
-
-    }
-
+    this._animName = animationName;
     this._animStr = animStr;
 
     // if duplicated option is set to true than position the wrapper
@@ -187,16 +186,16 @@ class marquee {
       if ( vertical ) {
 
         if ( opts.startVisible )
-          marqWrap.style.transfrom = 'translateY(0px)';
+          this._marqWrap.style.transform = 'translateY(0px)';
         else
-          marqWrap.style.transfrom = `translateY(${opts.direction === 'up' ? this._contHeight : ( -1 * ( ( this._elHeight * 2 ) - opts.gap ) ) }px)`;
+          this._marqWrap.style.transform = `translateY(${opts.direction === 'up' ? this._contHeight : ( -1 * ( ( this._elHeight * 2 ) - opts.gap ) ) }px)`;
 
       } else {
 
         if ( opts.startVisible )
-          marqWrap.style.transfrom = 'translateC(0px)';
+          this._marqWrap.style.transform = 'translateX(0px)';
         else
-          marqWrap.style.transfrom = `translateY(${opts.direction === 'left' ? this._contWidth : ( -1 * ( ( this._elWidth * 2 ) - opts.gap ) ) }px)`;
+          this._marqWrap.style.transform = `translateX(${opts.direction === 'left' ? this._contWidth : ( -1 * ( ( this._elWidth * 2 ) - opts.gap ) ) }px)`;
 
       }
 
@@ -249,15 +248,15 @@ class marquee {
         let duration = opts.duration;
 
         if ( vertical )
-          duration = ( opts.direction === 'up' ) ? opts.direction + ( this._contHeight / ( this._elHeight / opts.direction ) ) : opts.direction * 2;
+          duration = ( opts.direction === 'up' ) ? duration + ( this._contHeight / ( this._elHeight / duration ) ) : duration * 2;
         else
-          duration = ( opts.direction === 'left' ) ? opts.direction + ( this._contWidth / ( this._elWidth / opts.direction ) ) : opts.direction * 2;
+          duration = ( opts.direction === 'left' ) ? duration + ( this._contWidth / ( this._elWidth / duration ) ) : duration * 2;
 
         this._animStr = `${this._animName} ${duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
 
       // On 2nd loop things back to normal, normal duration for the rest of animations
       } else if ( this._loopCount === 2 )
-        this._animStr = `${animationName} ${this._completeDuration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
+        this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
 
       this._loopCount++;
 
@@ -269,7 +268,7 @@ class marquee {
       if ( opts.duplicated ) {
 
         if ( this._loopCount > 2 )
-          this._marqWrap.style.transfrom = `translateY(${( opts.direction === 'up' ) ? 0 : -1 * this._elHeight}px)`;
+          this._marqWrap.style.transform = `translateY(${( opts.direction === 'up' ) ? 0 : -1 * this._elHeight}px)`;
 
         animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : 0 }px)`;
 
@@ -278,14 +277,14 @@ class marquee {
         // This loop moves the marquee out of the container
         if ( this._loopCount === 2 ) {
 
-          this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
-          animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
+          this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          animationCss = `translateY(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
 
           this._loopCount++;
 
         } else if ( this._loopCount === 3 ) {
 
-          this._animStr = `${animationName} ${this._completeDuration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._animStr = `${this._animName} ${this._completeDuration / 1000}s 0s infinite ${opts.css3easing}`;
           this._repositionVert();
 
         }
@@ -300,7 +299,7 @@ class marquee {
       if ( opts.duplicated ) {
 
         if ( this._loopCount > 2 )
-          this._marqWrap.style.transfrom = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
+          this._marqWrap.style.transform = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
 
         animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0 }px)`;
 
@@ -309,21 +308,21 @@ class marquee {
         // This loop moves the marquee out of the container
         if ( this._loopCount === 2 ) {
 
-          this._animStr = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
-          animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
+          this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          animationCss = `translateX(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
 
           this._loopCount++;
 
         } else if ( this._loopCount === 3 ) {
 
-          this._animStr = `${animationName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
           this._repositionHor();
 
         }
 
       } else {
         this._repositionHor();
-        animationCss = `translateY(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contHeight}px)`;
+        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contHeight}px)`;
       }
     }
 
@@ -333,7 +332,7 @@ class marquee {
     // Append animation
     this._marqWrap.style.animation = this._animStr;
 
-    const keyFrameCss = `@${this._animName} {
+    const keyFrameCss = `@keyframes ${this._animName} {
       100% {
         transform: ${animationCss};
       }
@@ -346,7 +345,7 @@ class marquee {
     else {
 
       const styleEl = document.createElement( 'style' );
-      style.innerHTML = keyFrameCss;
+      styleEl.innerHTML = keyFrameCss;
 
       query( 'head' ).appendChild( styleEl );
 
@@ -368,11 +367,11 @@ class marquee {
   }
 
   _repositionVert() {
-    this._marqWrap.style.transfrom = `translateY(${ this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 ) }px)`;
+    this._marqWrap.style.transform = `translateY(${ this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 ) }px)`;
   }
 
   _repositionHor() {
-    this._marqWrap.style.transfrom = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
+    this._marqWrap.style.transform = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
   }
 
   pause() {
