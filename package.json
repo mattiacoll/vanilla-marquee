@@ -1,6 +1,6 @@
 {
-  "name": "js-marquee",
-  "version": "1.0.0",
+  "name": "vanilla-marquee",
+  "version": "1.0.1",
   "description": "",
   "main": "./dist/js-marquee.js",
   "exports": "./dist/js-marquee.js",
