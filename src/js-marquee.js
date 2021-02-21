@@ -8,7 +8,6 @@ const defOpts = {
   duration:         5000,
   easing:           'linear',
   gap:              20,
-  pauseOnCycle:     false,
   pauseOnHover:     false,
   speed:            0,
   startVisible:     false,
