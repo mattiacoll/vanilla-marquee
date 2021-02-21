@@ -5,7 +5,8 @@
   "main": "./dist/js-marquee.js",
   "exports": "./dist/js-marquee.js",
   "scripts": {
-    "rl": "rollup -cw"
+    "rl": "rollup -cw",
+    "test": ""
   },
   "repository": {
     "type": "git",
