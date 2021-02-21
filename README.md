@@ -1,17 +1,17 @@
-# js-marquee
+# vanilla-marquee
 
 An es5 vanilla-js implementation of [jQuery.marquee](https://github.com/aamirafridi/jQuery.Marquee/blob/master/)
 
 ## Installation
 
 ```
-npm i js-marquee
+npm i vanilla-marquee
 ```
 
 ## Usage
 
 ```
-import maqruee from 'js-marquee'
+import maqruee from 'vanilla-marquee'
 
 new marquee( element, {
   options
@@ -34,7 +34,7 @@ babel({
   exclude:      '/node_modules/',
   include: [
     'src/**', // src folder
-    /node_modules\/.+(js-marquee|matt-utils)/,
+    /node_modules\/.+(vanilla-marquee|matt-utils)/,
   ]
 }),
 ```
