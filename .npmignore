@@ -15,3 +15,5 @@ README.md
 renovate.json
 rollup.config.js
 tsconfig.json
+.github
+src
