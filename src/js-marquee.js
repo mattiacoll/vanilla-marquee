@@ -1,7 +1,6 @@
-import { query, setAttr, getAttr, byClass, addEvent, removeEvent, remAttr, forEachHTML, queryAll } from 'matt-utils';
+import { query, setAttr, getAttr, byClass, addEvent, removeEvent, remAttr, forEachHTML, queryAll, addClass } from 'matt-utils';
 
 const defOpts = {
-  allowCss3Support: true,
   css3easing:       'linear',
   delayBeforeStart: 1000,
   direction:        'left',
@@ -15,13 +14,25 @@ const defOpts = {
   startVisible:     false,
 };
 
-
+/**
+ * Vanilla js marquee based on jQuery.marquee
+ * https://github.com/aamirafridi/jQuery.Marquee
+ */
 class marquee {
 
+  /**
+   * Constructor
+   *
+   * @param {Element} el - Element
+   * @param {Object} opts - the options
+   */
   constructor( el, opts ) {
 
     if ( typeof el === 'undefined' )
       throw new Error( 'el cannot be undefined' );
+
+    if ( typeof el === 'string' )
+      throw new Error( 'el cannot be just a selector' );
 
     if ( el === null )
       throw new Error( 'el cannot be null' );
@@ -188,25 +199,33 @@ class marquee {
 
     this.el = el;
 
+    addEvent( this.el, 'pause', this.pause.bind( this ) );
+    addEvent( this.el, 'resume', this.resume.bind( this ) );
+
     if ( opts.pauseOnHover ) {
 
-      addEvent( this.el, 'mouseover', this.pause().bind( this ) );
-      addEvent( this.el, 'mouseout', this.resume().bind( this ) );
+      addEvent( this.el, 'mouseover', this.pause.bind( this ) );
+      addEvent( this.el, 'mouseout', this.resume.bind( this ) );
 
     }
 
+    /**
+     * Method for animation end event
+     */
     this._animEnd = () => {
       this._animate( vertical );
       this.el.dispatchEvent( new CustomEvent( 'finished' ) );
     }
 
-    if ( opts.allowCss3Support )
-      this._animate( vertical );
-    else
-      this._startAnimationWithDelay();
+    this._animate( vertical );
 
   }
 
+  /**
+   * Animation of the marquee
+   *
+   * @param {Boolean} vertical - Vertical direction
+   */
   _animate( vertical = false ) {
 
     const opts = this._opts;
@@ -240,6 +259,7 @@ class marquee {
     if ( vertical ) {
       if ( opts.duplicated ) {
 
+        // Adjust the starting point of animation only when first loops finishes
         if ( this._loopCount > 2 )
           this._marqWrap.style.transform = `translateY(${( opts.direction === 'up' ) ? 0 : -1 * this._elHeight}px)`;
 
@@ -250,8 +270,9 @@ class marquee {
         // This loop moves the marquee out of the container
         if ( this._loopCount === 2 ) {
 
+          // Adjust the css3 animation as well
           this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
-          animationCss = `translateY(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
+          animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
 
           this._loopCount++;
 
@@ -272,10 +293,9 @@ class marquee {
     } else {
       if ( opts.duplicated ) {
 
-        if ( this._loopCount > 2 ) {
+        // Adjust the starting point of animation only when first loops finishes
+        if ( this._loopCount > 2 )
           this._marqWrap.style.transform = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
-          $( this._marqWrap ).css('transform', 'translateX(' + (opts.direction === 'left' ? 0 : '-' + this._elWidth + 'px') + ')');
-        }
 
         animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0 }px)`;
 
@@ -284,8 +304,9 @@ class marquee {
         // This loop moves the marquee out of the container
         if ( this._loopCount === 2 ) {
 
+          // Adjust the css3 animation as well
           this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
-          animationCss = `translateX(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
+          animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
 
           this._loopCount++;
 
@@ -320,48 +341,79 @@ class marquee {
 
     if ( styles.length )
       styles[styles.length - 1].innerHTML = keyFrameCss;
+    else if ( byClass( 'marq-wrap-style' ).length )
+      byClass( 'marq-wrap-style' )[0].innerHTML = keyFrameCss;
     else {
 
       const styleEl = document.createElement( 'style' );
+      addClass( styleEl, 'marq-wrap-style' )
       styleEl.innerHTML = keyFrameCss;
 
       query( 'head' ).appendChild( styleEl );
 
     }
 
+    // Animation iteration event
     addEvent( this._marqWrap, 'animationiteration', this._animIter.bind( this ), {
       once: true,
     });
+
+    // Animation stopped
     addEvent( this._marqWrap, 'animationend', this._animEnd.bind( this ), {
       once: true,
     });
 
+    this._status === 'running';
     setAttr( this.el, 'data-runningStatus', 'resumed' );
 
   }
 
+  /**
+   * Event fired on Animation iteration
+   */
   _animIter() {
     this.el.dispatchEvent( new CustomEvent( 'finished' ) );
   }
 
+  /**
+   * Reposition the Wrapper vertically
+   */
   _repositionVert() {
     this._marqWrap.style.transform = `translateY(${ this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 ) }px)`;
   }
 
+  /**
+   * Reposition the Wrapper horizontally
+   */
   _repositionHor() {
     this._marqWrap.style.transform = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
   }
 
+  /**
+   * Pause the animation
+   */
   pause() {
-    this._marqWrap.style.playState = 'paused';
+    this._marqWrap.style.animationPlayState = 'paused';
     this._status = 'paused';
+
+    setAttr( this.el, 'data-runningStatus', 'paused' );
+    this.el.dispatchEvent( new CustomEvent( 'paused' ) );
   }
 
+  /**
+   * Resume the animation
+   */
   resume() {
-    this._marqWrap.style.playState = 'running';
+    this._marqWrap.style.animationPlayState = 'running';
     this._status = 'running';
+
+    setAttr( this.el, 'data-runningStatus', 'resumed' );
+    this.el.dispatchEvent( new CustomEvent( 'resumed' ) );
   }
 
+  /**
+   * Toggle animation playing status
+   */
   toggle() {
 
     if ( this._status === 'paused' )
@@ -372,20 +424,24 @@ class marquee {
   }
 
   /**
-   * Stops all timers and removes events
+   * Destorys the instance and removes events
    */
   destroy() {
 
+    removeEvent( this.el, 'pause', this.pause.bind( this ) );
+    removeEvent( this.el, 'resume', this.resume.bind( this ) );
+
     if ( this._opts.pauseOnHover ) {
 
-      removeEvent( this.el, 'mouseover', this.pause().bind( this ) );
-      removeEvent( this.el, 'mouseout', this.resume().bind( this ) );
+      removeEvent( this.el, 'mouseover', this.pause.bind( this ) );
+      removeEvent( this.el, 'mouseout', this.resume.bind( this ) );
 
     }
 
     removeEvent( this._marqWrap, 'animationiteration', this._animIter.bind( this ), {
       once: true,
     });
+
     removeEvent( this._marqWrap, 'animationend', this._animEnd.bind( this ), {
       once: true,
     });
