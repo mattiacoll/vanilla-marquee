@@ -2,7 +2,7 @@
   "name": "js-marquee",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/js-marquee.js",
   "exports": "./dist/js-marquee.js",
   "scripts": {
     "rl": "rollup -cw"
