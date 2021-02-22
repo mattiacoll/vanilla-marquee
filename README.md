@@ -1,6 +1,6 @@
 # vanilla-marquee
 
-An es5 vanilla-js implementation of [jQuery.marquee](https://github.com/aamirafridi/jQuery.Marquee/blob/master/)
+An es5 vanilla-js implementation of [jQuery.marquee](https://github.com/aamirafridi/jQuery.Marquee/)
 
 ## Installation
 
