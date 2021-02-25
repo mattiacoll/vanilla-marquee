@@ -211,7 +211,12 @@ class marquee {
     this._opts = opts;
 
     const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 ),
-      animStr           = `${animationName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s infinite ${opts.css3easing}`;
+      animStr           = this._animationStr(
+        animationName,
+        opts.duration / 1000,
+        opts.delayBeforeStart / 1000,
+        'infinite'
+      );
 
     this._animName = animationName;
     this._animStr = animStr;
@@ -276,6 +281,21 @@ class marquee {
   }
 
   /**
+   * Build the css string for the animation
+   *
+   * @privte
+   * @param {String} [name=''] - animation name
+   * @param {Number} [duration=0] - Animation duration (in s)
+   * @param {Number} [delay=0] - Animation delay before starting (in s)
+   * @param {String} [loops=''] - Animation iterations
+   *
+   * @returns {String} css animation string
+   */
+  _animationStr( name = '', duration = 0, delay = 0, loops = '' ) {
+    return `${name} ${duration}s ${delay}s ${loops} ${this._opts.css3easing}`;
+  }
+
+  /**
    * Animation of the marquee
    *
    * @private
@@ -297,12 +317,21 @@ class marquee {
         else
           duration = ( opts.direction === 'left' ) ? duration + ( this._contWidth / ( this._elWidth / duration ) ) : duration * 2;
 
-        this._animStr = `${this._animName} ${duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+        this._animStr = this._animationStr(
+          this._animName,
+          duration / 1000,
+          opts.delayBeforeStart / 1000
+        );
 
       // On 2nd loop things back to normal, normal duration for the rest of animations
       } else if ( this._loopCount === 2 ) {
         this._animName = `${this._animName}0`;
-        this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
+        this._animStr = this._animationStr(
+          this._animName,
+          opts.duration / 1000,
+          0,
+          'infinite'
+        );
       }
 
       this._loopCount++;
@@ -326,7 +355,11 @@ class marquee {
         if ( this._loopCount === 2 ) {
 
           // Adjust the css3 animation as well
-          this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          this._animStr = _animationStr(
+            this._animName,
+            opts.duration / 1000,
+            opts.delayBeforeStart / 1000
+          );
           animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
 
           this._loopCount++;
@@ -334,7 +367,12 @@ class marquee {
         } else if ( this._loopCount === 3 ) {
 
           this._animName = `${this._animName}0`;
-          this._animStr = `${this._animName} ${this._completeDuration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._animStr = _animationStr(
+            this._animName,
+            this._completeDuration / 1000,
+            0,
+            'infinite'
+          );
           this._repositionVert();
 
         }
@@ -360,7 +398,11 @@ class marquee {
         if ( this._loopCount === 2 ) {
 
           // Adjust the css3 animation as well
-          this._animStr = `${this._animName} ${opts.duration / 1000}s ${opts.delayBeforeStart / 1000}s ${opts.css3easing}`;
+          this._animStr = _animationStr(
+            this._animName,
+            opts.duration / 1000,
+            opts.delayBeforeStart / 1000
+          );
           animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
 
           this._loopCount++;
@@ -369,7 +411,12 @@ class marquee {
 
           // Adjust the animation
           this._animName = `${this._animName}0`;
-          this._animStr = `${this._animName} ${opts.duration / 1000}s 0s infinite ${opts.css3easing}`;
+          this._animStr = _animationStr(
+            this._animName,
+            opts.duration / 1000,
+            0,
+            'infinite'
+          );
           this._repositionHor();
 
         }
