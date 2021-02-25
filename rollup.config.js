@@ -8,7 +8,24 @@ export default [
     input: 'src/js-marquee.js',
     output: [{
       plugins: [
-        terser(),
+        terser({
+          mangle: {
+            properties: {
+              regex: /^_*/,
+              reserved: [
+                'css3easing',
+                'delayBeforeStart',
+                'direction',
+                'duplicated',
+                'duration',
+                'gap',
+                'pauseOnHover',
+                'speed',
+                'startVisible',
+              ]
+            },
+          },
+        }),
       ],
       dir:            'dist/',
       format:         'es',
