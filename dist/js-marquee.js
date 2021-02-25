@@ -117,6 +117,7 @@ class marquee {
     const marq = byClass( 'js-marquee', el )[0];
 
     marq.style.marginRight = `${opts.gap}px`;
+    marq.style.willChange  = 'transform';
     marq.style.float       = 'left';
 
     if ( opts.duplicated )
