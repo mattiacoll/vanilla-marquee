@@ -5,7 +5,7 @@ import { terser } from 'rollup-plugin-terser';
 export default [
   // Custom per tutte le pagine
   {
-    input: 'src/js-marquee.js',
+    input: 'src/vanilla-marquee.js',
     output: [{
       plugins: [
         terser({
