@@ -43,13 +43,24 @@ function remAttr(el, attr) {
   el.removeAttribute(attr);
 }
 
+/**
+ * @typedef defaultOptions
+ * @property {String} [css3easing='linear'] - A css3 transtion timing
+ * @property {Number} [delayBeforeStart=1000] - Time in milliseconds before the marquee starts animating
+ * @property {String} [direction='left'] - Direction towards which the marquee will animate ` 'left' | 'right' | 'up' | 'down'`
+ * @property {Boolean} [duplicated=false] - Should the marquee be duplicated to show an effect of continuous flow. Use this only when the text is shorter than the container
+ * @property {Number} [duration=5000] - Duration in milliseconds in which you want your element to travel
+ * @property {Number} [gap=20] - Gap in pixels between the tickers. Will work only when the `duplicated` option is set to `true`
+ * @property {Boolean} [pauseOnHover=false] - Pause the marquee on hover
+ * @property {Number} [speed=0] - Speed will override duration. Speed allows you to set a relatively constant marquee speed regardless of the width of the containing element. Speed is measured in pixels/second
+ * @property {Boolean} [startVisible=false] - The marquee will be visible from the start if set to `true`
+ */
 const defOpts = {
   css3easing:       'linear',
   delayBeforeStart: 1000,
   direction:        'left',
   duplicated:       false,
   duration:         5000,
-  easing:           'linear',
   gap:              20,
   pauseOnHover:     false,
   speed:            0,
@@ -65,8 +76,8 @@ class marquee {
   /**
    * Constructor
    *
-   * @param {Element} el - Element
-   * @param {Object} opts - the options
+   * @param {Element} el - The element where the marquee is applied
+   * @param {defaultOptions} opts - the options
    */
   constructor( el, opts ) {
 
@@ -267,6 +278,7 @@ class marquee {
   /**
    * Animation of the marquee
    *
+   * @private
    * @param {Boolean} vertical - Vertical direction
    */
   _animate( vertical = false ) {
@@ -413,6 +425,8 @@ class marquee {
 
   /**
    * Event fired on Animation iteration
+   *
+   * @private
    */
   _animIter() {
     this.el.dispatchEvent( new CustomEvent( 'finished' ) );
@@ -420,6 +434,8 @@ class marquee {
 
   /**
    * Reposition the Wrapper vertically
+   *
+   * @private
    */
   _repositionVert() {
     this._marqWrap.style.transform = `translateY(${ this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 ) }px)`;
@@ -427,6 +443,8 @@ class marquee {
 
   /**
    * Reposition the Wrapper horizontally
+   *
+   * @private
    */
   _repositionHor() {
     this._marqWrap.style.transform = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
