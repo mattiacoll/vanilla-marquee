@@ -2,8 +2,8 @@
   "name": "vanilla-marquee",
   "version": "1.0.3",
   "description": "",
-  "main": "./dist/js-marquee.js",
-  "exports": "./dist/js-marquee.js",
+  "main": "./dist/vanilla-marquee.js",
+  "exports": "./dist/vanilla-marquee.js",
   "scripts": {
     "rl": "rollup -cw",
     "declarations": "tsc -p tsconfig.json",
