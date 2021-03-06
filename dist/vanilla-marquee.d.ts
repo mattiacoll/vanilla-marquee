@@ -51,7 +51,7 @@ declare module "vanilla-marquee" {
          */
         constructor(el: Element, opts: defaultOptions);
         _loopCount: number;
-        _marqWrap: any;
+        _marqWrap: Element;
         _contHeight: number | undefined;
         _elHeight: any;
         _completeDuration: number | undefined;
