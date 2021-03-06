@@ -129,7 +129,7 @@ class marquee {
 
       const elHeight = parseInt( marqs[0].clientHeight + opts.gap );
 
-      this._elHeight = el_elHeight;
+      this._elHeight = elHeight;
 
       // adjust the animation duration according to the text length
       if ( opts.startVisible && !opts.duplicated ) {
