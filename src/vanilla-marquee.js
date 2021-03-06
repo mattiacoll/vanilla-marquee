@@ -24,6 +24,8 @@ const defOpts = {
   startVisible:     false,
 };
 
+let instances = 0;
+
 /**
  * Vanilla js marquee based on jQuery.marquee
  * https://github.com/aamirafridi/jQuery.Marquee
@@ -233,6 +235,9 @@ class marquee {
       this.el.dispatchEvent( new CustomEvent( 'finished' ) );
     }
 
+    this.instance = instances;
+    instances++;
+
     this._animate( vertical );
 
   }
@@ -400,12 +405,12 @@ class marquee {
 
     if ( styles.length )
       styles[styles.length - 1].innerHTML = keyFrameCss;
-    else if ( byClass( 'marq-wrap-style' ).length )
-      byClass( 'marq-wrap-style' )[0].innerHTML = keyFrameCss;
+    else if ( byClass( `marq-wrap-style-${this.instance}` ).length )
+      byClass( `marq-wrap-style-${this.instance}` )[0].innerHTML = keyFrameCss;
     else {
 
       const styleEl = document.createElement( 'style' );
-      addClass( styleEl, 'marq-wrap-style' )
+      addClass( styleEl, `marq-wrap-style-${this.instance}` )
       styleEl.innerHTML = keyFrameCss;
 
       query( 'head' ).appendChild( styleEl );
