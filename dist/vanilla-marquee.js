@@ -147,6 +147,7 @@ function remAttr(el, attr) {
  * @property {Number} [duration=5000] - Duration in milliseconds in which you want your element to travel
  * @property {Number} [gap=20] - Gap in pixels between the tickers. Will work only when the `duplicated` option is set to `true`
  * @property {Boolean} [pauseOnHover=false] - Pause the marquee on hover
+ * @property {Boolean} [recalcResize=false] - Recalculate the marquee position on resize (breaks compatibility with jquery.marquee)
  * @property {Number} [speed=0] - Speed will override duration. Speed allows you to set a relatively constant marquee speed regardless of the width of the containing element. Speed is measured in pixels/second
  * @property {Boolean} [startVisible=false] - The marquee will be visible from the start if set to `true`
  */
@@ -158,9 +159,12 @@ const defOpts = {
   duration:         5000,
   gap:              20,
   pauseOnHover:     false,
+  recalcResize:     false,
   speed:            0,
   startVisible:     false,
 };
+
+let instances = 0;
 
 /**
  * Vanilla js marquee based on jQuery.marquee
@@ -237,73 +241,11 @@ class marquee {
       vertical     = ( opts.direction === 'up' || opts.direction === 'down' );
 
     this._marqWrap = marqWrap;
+    this._vertical = vertical;
+    this._duration = opts.duration;
+    this._opts     = opts;
 
-    // If direction is up or down, get the height of main element
-    if ( vertical ) {
-
-      const contHeight = el.clientHeight;
-      this._contHeight = contHeight;
-
-      remAttr( marqWrap, 'style' );
-
-      el.style.clientHeight = `${contHeight}px`;
-
-      const marqs = byClass( 'js-marquee', el ),
-        marqNums  = marqs.length - 1;
-
-      // Change the CSS for js-marquee element
-      forEachHTML( marqs, ( currEl, ind ) => {
-
-        currEl.style.float        = 'none';
-        currEl.style.marginRight  = '0px';
-
-        // Remove bottom margin from 2nd element if duplicated
-        if ( opts.duplicated && ind === marqNums )
-          currEl.style.marginBottom = '0px';
-        else
-          currEl.style.marginBottom = `${opts.gap}px`;
-
-      });
-
-      const elHeight = parseInt( marqs[0].clientHeight + opts.gap );
-
-      this._elHeight = el_elHeight;
-
-      // adjust the animation duration according to the text length
-      if ( opts.startVisible && !opts.duplicated ) {
-        // Compute the complete animation duration and save it for later reference
-        // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
-        this._completeDuration = ( elHeight + contHeight) / parseInt( contHeight ) * opts.duration;
-        opts.duration = elHeight / parseInt( contHeight ) * opts.duration;
-      } else // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
-        opts.duration = elHeight / parseInt( contHeight ) / parseInt( contHeight ) * opts.duration;
-
-    } else {
-
-      // Save the width of the each element so we can use it in animation
-      const elWidth = parseInt( byClass( 'js-marquee', el )[0].clientWidth + opts.gap ),
-        contWidth   = el.clientWidth;
-
-      this._contWidth = contWidth;
-      this._elWidth   = elWidth;
-
-      // adjust the animation duration according to the text length
-      if ( opts.startVisible && !opts.duplicated ) {
-        // Compute the complete animation duration and save it for later reference
-        // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
-        this._completeDuration = ( elWidth + contWidth) / parseInt( contWidth ) * opts.duration;
-        // (Width of the text node / width of the main container) * duration
-        opts.duration = elWidth / parseInt( contWidth ) * opts.duration;
-      } else // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
-        opts.duration = ( elWidth + parseInt( contWidth ) ) / parseInt( contWidth ) * opts.duration;
-    }
-
-
-    // if duplicated then reduce the duration
-    if ( opts.duplicated )
-      opts.duration = opts.duration / 2;
-
-    this._opts = opts;
+    this._calcSizes();
 
     const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 ),
       animStr           = this._animationStr(
@@ -371,7 +313,13 @@ class marquee {
       this.el.dispatchEvent( new CustomEvent( 'finished' ) );
     };
 
+    this._instance = instances;
+    instances++;
+
     this._animate( vertical );
+
+    if ( opts.recalcResize )
+      addEvent( window, 'resize', this._recalcResize.bind( this ) );
 
   }
 
@@ -538,12 +486,12 @@ class marquee {
 
     if ( styles.length )
       styles[styles.length - 1].innerHTML = keyFrameCss;
-    else if ( byClass( 'marq-wrap-style' ).length )
-      byClass( 'marq-wrap-style' )[0].innerHTML = keyFrameCss;
+    else if ( byClass( `marq-wrap-style-${this._instance}` ).length )
+      byClass( `marq-wrap-style-${this._instance}` )[0].innerHTML = keyFrameCss;
     else {
 
       const styleEl = document.createElement( 'style' );
-      addClass( styleEl, 'marq-wrap-style' );
+      addClass( styleEl, `marq-wrap-style-${this._instance}` );
       styleEl.innerHTML = keyFrameCss;
 
       query( 'head' ).appendChild( styleEl );
@@ -590,6 +538,95 @@ class marquee {
    */
   _repositionHor() {
     this._marqWrap.style.transform = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
+  }
+
+  /**
+   * Calculates the speed and the dimension of the marquee
+   *
+   * @private
+   */
+  _calcSizes() {
+
+    const el = this.el,
+      opts   = this._opts;
+
+    // If direction is up or down, get the height of main element
+    if ( this._vertical ) {
+
+      const contHeight = el.clientHeight;
+      this._contHeight = contHeight;
+
+      remAttr( marqWrap, 'style' );
+
+      el.style.clientHeight = `${contHeight}px`;
+
+      const marqs = byClass( 'js-marquee', el ),
+        marqNums  = marqs.length - 1;
+
+      // Change the CSS for js-marquee element
+      forEachHTML( marqs, ( currEl, ind ) => {
+
+        currEl.style.float        = 'none';
+        currEl.style.marginRight  = '0px';
+
+        // Remove bottom margin from 2nd element if duplicated
+        if ( opts.duplicated && ind === marqNums )
+          currEl.style.marginBottom = '0px';
+        else
+          currEl.style.marginBottom = `${opts.gap}px`;
+
+      });
+
+      const elHeight = parseInt( marqs[0].clientHeight + opts.gap );
+      this._elHeight = elHeight;
+
+      // adjust the animation duration according to the text length
+      if ( opts.startVisible && !opts.duplicated ) {
+        // Compute the complete animation duration and save it for later reference
+        // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
+        this._completeDuration = ( elHeight + contHeight) / parseInt( contHeight ) * this._duration;
+        opts.duration = elHeight / parseInt( contHeight ) * this._duration;
+      } else // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
+        opts.duration = elHeight / parseInt( contHeight ) / parseInt( contHeight ) * this._duration;
+
+    } else {
+
+      // Save the width of the each element so we can use it in animation
+      const elWidth = parseInt( byClass( 'js-marquee', el )[0].clientWidth + opts.gap ),
+        contWidth   = el.clientWidth;
+
+      this._contWidth = contWidth;
+      this._elWidth   = elWidth;
+
+      // adjust the animation duration according to the text length
+      if ( opts.startVisible && !opts.duplicated ) {
+        // Compute the complete animation duration and save it for later reference
+        // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
+        this._completeDuration = ( elWidth + contWidth) / parseInt( contWidth ) * this._duration;
+        // (Width of the text node / width of the main container) * duration
+        opts.duration = elWidth / parseInt( contWidth ) * this._duration;
+      } else // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
+        opts.duration = ( elWidth + parseInt( contWidth ) ) / parseInt( contWidth ) * this._duration;
+    }
+
+    // if duplicated then reduce the duration
+    if ( opts.duplicated )
+      opts.duration = opts.duration / 2;
+
+  }
+
+  /**
+   * Recalculates the dimensions and positon of the marquee on page resize
+   *
+   * @private
+   */
+  _recalcResize() {
+
+    this._calcSizes();
+
+    this._loopCount = 2;
+    this._animEnd();
+
   }
 
   /**
@@ -648,6 +685,9 @@ class marquee {
     removeEvent( this._marqWrap, 'animationend', this._animEnd.bind( this ), {
       once: true,
     });
+
+    if ( opts.recalcResize )
+      removeEvent( window, 'resize', this._recalcResize.bind( this ) );
 
   }
 
