@@ -1,16 +1,65 @@
+/**
+ * Shorthand for `document.getElementById`
+ *
+ * @param {String} id - The selector's id
+ *
+ * @returns {Element|null} - The selected element
+ */
+/**
+ * Shorthand for `document.getElementsByClassName`
+ *
+ * @param {String} selClass - The selector's class
+ * @param {Element} [parent=document] - Parent element
+ *
+ * @returns {HTMLCollection} - The selected elements
+ */
+
 function byClass(selClass, parent = document) {
   return parent.getElementsByClassName(selClass);
 }
+/**
+ * Shorthand for `document.querySelector`
+ *
+ * @param {String} selector - Selector
+ * @param {Element} [parent=document] - Parent element
+ *
+ * @returns {Element|null} - The selected element
+ */
+
 function query(selector, parent = document) {
   return parent.querySelector(selector);
 }
+/**
+ * Shorthand per `document.querySelectorAll`
+ *
+ * @param {String} selector - Selector
+ * @param {Element} [parent=document] - Parent element
+ *
+ * @returns {NodeList} - The selected element
+ */
+
 function queryAll(selector, parent = document) {
   return parent.querySelectorAll(selector);
 }
 
+/**
+ * Foreach polyfill for NodeList and HTMLCollection
+ * https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
+ *
+ * @param {Array|NodeList|HTMLCollection} els - A list of elements
+ * @param {foreachCB} fn - Callback containing ( value, index ) as arguments
+ * @param {Scope} [scope] - Scope
+ */
 function forEachHTML(els, fn, scope) {
   for (let i = 0, numEls = els.length; i < numEls; i++) fn.call(scope, els[i], i);
 }
+
+/**
+ * Shorthand for `element.classList.add`, works with multiple nodes
+ *
+ * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {...String} classes - Classes to add
+ */
 
 function addClass(el, ...classes) {
   if (el.length === undefined) addClassEl(el, ...classes);else {
@@ -18,6 +67,12 @@ function addClass(el, ...classes) {
       addClassEl(currEl, ...classes);
     });
   }
+  /**
+   * Adds classes to a single element
+   *
+   * @param {Element} elem - An HTML element
+   * @param {...String} remClass - Classes to add
+   */
 
   function addClassEl(elem, ...remClass) {
     remClass.forEach(singleClass => {
@@ -26,19 +81,59 @@ function addClass(el, ...classes) {
   }
 }
 
+/**
+ * Shorthand for `element.addEventListener`
+ *
+ * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {String} ev - Event's name
+ * @param {Function} fn - Event's function
+ * @param {Object} [opts] - Optional event options
+ */
 function addEvent(el, ev, fn, opts) {
   el.addEventListener(ev, fn, opts);
 }
+/**
+ * Shorthand for `element.removeEventListener`
+ *
+ * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {String} ev - Event's name
+ * @param {Function} fn - Event's function
+ * @param {Object} [opts] - Optional event options
+ */
+
 function removeEvent(el, ev, fn, opts) {
   el.removeEventListener(ev, fn, opts);
 }
 
+/**
+ * Shorthand for `element.getAttribute`
+ *
+ * @param {Element} el - An HTML element
+ * @param {String} attr - The attribute to retrieve
+ *
+ * @returns {String} - The attribute's value
+ */
 function getAttr(el, attr) {
   return el.getAttribute(attr);
 }
+/**
+ * Shorthand for `element.setAttribute`
+ *
+ * @param {Element} el - An HTML element
+ * @param {String} attr - The attribute to retrieve
+ * @param {String} val - The value to set to the attribute
+ */
+
 function setAttr(el, attr, val) {
   el.setAttribute(attr, val);
 }
+/**
+ * Shorthand for `element.removeAttribute`
+ *
+ * @param {Element} el - An HTML element
+ * @param {String} attr - The attribute to remove
+ */
+
 function remAttr(el, attr) {
   el.removeAttribute(attr);
 }
