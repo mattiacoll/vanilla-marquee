@@ -194,6 +194,7 @@ class marquee {
       ...opts,
     };
 
+    this.el = el;
     this._loopCount = 3;
 
     // Check for data-option since they have top priority
@@ -294,8 +295,6 @@ class marquee {
         this._repositionHor();
 
     }
-
-    this.el = el;
 
     addEvent( this.el, 'pause', this.pause.bind( this ) );
     addEvent( this.el, 'resume', this.resume.bind( this ) );
