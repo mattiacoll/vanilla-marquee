@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
+import eslint from '@rollup/plugin-eslint';
 
 export default [
   // Custom per tutte le pagine
@@ -20,6 +21,7 @@ export default [
                 'duration',
                 'gap',
                 'pauseOnHover',
+                'recalcResize',
                 'speed',
                 'startVisible',
               ]
@@ -39,6 +41,7 @@ export default [
     }],
     context: 'window',
     plugins: [
+      eslint(),
       resolve({
         browser:        true,
         modules:        true,
