@@ -109,12 +109,12 @@ class marquee {
 
     this._calcSizes();
 
-    const animationName = 'marqueeAnimation-' + Math.floor( Math.random() * 10000000 ),
+    const animationName = `marqueeAnimation-${Math.floor( Math.random() * 10000000 )}`,
       animStr           = this._animationStr(
         animationName,
         opts.duration / 1000,
         opts.delayBeforeStart / 1000,
-        'infinite'
+        'infinite',
       );
 
     this._animName = animationName;
@@ -128,14 +128,14 @@ class marquee {
         if ( opts.startVisible )
           this._marqWrap.style.transform = 'translateY(0px)';
         else
-          this._marqWrap.style.transform = `translateY(${opts.direction === 'up' ? this._contHeight : ( -1 * ( ( this._elHeight * 2 ) - opts.gap ) ) }px)`;
+          this._marqWrap.style.transform = `translateY(${opts.direction === 'up' ? this._contHeight : ( -1 * ( ( this._elHeight * 2 ) - opts.gap ) )}px)`;
 
       } else {
 
-        if ( opts.startVisible )
+        if ( opts.startVisible ) // eslint-disable-line no-lonely-if
           this._marqWrap.style.transform = 'translateX(0px)';
         else
-          this._marqWrap.style.transform = `translateX(${opts.direction === 'left' ? this._contWidth : ( -1 * ( ( this._elWidth * 2 ) - opts.gap ) ) }px)`;
+          this._marqWrap.style.transform = `translateX(${opts.direction === 'left' ? this._contWidth : ( -1 * ( ( this._elWidth * 2 ) - opts.gap ) )}px)`;
 
       }
 
@@ -149,10 +149,12 @@ class marquee {
       this._loopCount = 2;
 
     } else {
-      if ( vertical )
+
+      if ( vertical ) // eslint-disable-line no-lonely-if
         this._repositionVert();
       else
         this._repositionHor();
+
     }
 
     this.el = el;
@@ -173,7 +175,7 @@ class marquee {
     this._animEnd = () => {
       this._animate( vertical );
       this.el.dispatchEvent( new CustomEvent( 'finished' ) );
-    }
+    };
 
     this._instance = instances;
     instances++;
@@ -225,7 +227,7 @@ class marquee {
         this._animStr = this._animationStr(
           this._animName,
           duration / 1000,
-          opts.delayBeforeStart / 1000
+          opts.delayBeforeStart / 1000,
         );
 
       // On 2nd loop things back to normal, normal duration for the rest of animations
@@ -235,7 +237,7 @@ class marquee {
           this._animName,
           opts.duration / 1000,
           0,
-          'infinite'
+          'infinite',
         );
       }
 
@@ -252,7 +254,7 @@ class marquee {
         if ( this._loopCount > 2 )
           this._marqWrap.style.transform = `translateY(${( opts.direction === 'up' ) ? 0 : -1 * this._elHeight}px)`;
 
-        animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : 0 }px)`;
+        animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : 0}px)`;
 
       } else if ( opts.startVisible ) {
 
@@ -260,23 +262,23 @@ class marquee {
         if ( this._loopCount === 2 ) {
 
           // Adjust the css3 animation as well
-          this._animStr = _animationStr(
+          this._animStr = this._animationStr(
             this._animName,
             opts.duration / 1000,
-            opts.delayBeforeStart / 1000
+            opts.delayBeforeStart / 1000,
           );
-          animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight }px)`;
+          animationCss = `translateY(${( opts.direction === 'up' ) ? -1 * this._elHeight : this._contHeight}px)`;
 
           this._loopCount++;
 
         } else if ( this._loopCount === 3 ) {
 
           this._animName = `${this._animName}0`;
-          this._animStr = _animationStr(
+          this._animStr = this._animationStr(
             this._animName,
             this._completeDuration / 1000,
             0,
-            'infinite'
+            'infinite',
           );
           this._repositionVert();
 
@@ -289,13 +291,14 @@ class marquee {
 
       }
     } else {
-      if ( opts.duplicated ) {
+
+      if ( opts.duplicated ) { // eslint-disable-line no-lonely-if
 
         // Adjust the starting point of animation only when first loops finishes
         if ( this._loopCount > 2 )
           this._marqWrap.style.transform = `translateX(${( opts.direction === 'left' ) ? 0 : -1 * this._elWidth}px)`;
 
-        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0 }px)`;
+        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : 0}px)`;
 
       } else if ( opts.startVisible ) {
 
@@ -303,12 +306,12 @@ class marquee {
         if ( this._loopCount === 2 ) {
 
           // Adjust the css3 animation as well
-          this._animStr = _animationStr(
+          this._animStr = this._animationStr(
             this._animName,
             opts.duration / 1000,
-            opts.delayBeforeStart / 1000
+            opts.delayBeforeStart / 1000,
           );
-          animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth }px)`;
+          animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth}px)`;
 
           this._loopCount++;
 
@@ -316,11 +319,11 @@ class marquee {
 
           // Adjust the animation
           this._animName = `${this._animName}0`;
-          this._animStr = _animationStr(
+          this._animStr = this._animationStr(
             this._animName,
             opts.duration / 1000,
             0,
-            'infinite'
+            'infinite',
           );
           this._repositionHor();
 
@@ -339,12 +342,11 @@ class marquee {
     this._marqWrap.style.animation = this._animStr;
 
     const keyFrameCss = `@keyframes ${this._animName} {
-      100% {
-        transform: ${animationCss};
-      }
-    }`;
-
-    const styles = queryAll( 'style', this._marqWrap );
+        100% {
+          transform: ${animationCss};
+        }
+      }`,
+      styles = queryAll( 'style', this._marqWrap );
 
     if ( styles.length )
       styles[styles.length - 1].innerHTML = keyFrameCss;
@@ -353,7 +355,7 @@ class marquee {
     else {
 
       const styleEl = document.createElement( 'style' );
-      addClass( styleEl, `marq-wrap-style-${this._instance}` )
+      addClass( styleEl, `marq-wrap-style-${this._instance}` );
       styleEl.innerHTML = keyFrameCss;
 
       query( 'head' ).appendChild( styleEl );
@@ -370,7 +372,7 @@ class marquee {
       once: true,
     });
 
-    this._status === 'running';
+    this._status = 'running';
     setAttr( this.el, 'data-runningStatus', 'resumed' );
 
   }
@@ -390,7 +392,7 @@ class marquee {
    * @private
    */
   _repositionVert() {
-    this._marqWrap.style.transform = `translateY(${ this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 ) }px)`;
+    this._marqWrap.style.transform = `translateY(${this._opts.direction === 'up' ? this._contHeight : ( this._elHeight * -1 )}px)`;
   }
 
   /**
@@ -399,7 +401,7 @@ class marquee {
    * @private
    */
   _repositionHor() {
-    this._marqWrap.style.transform = `translateX(${ this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 ) }px)`;
+    this._marqWrap.style.transform = `translateX(${this._opts.direction === 'left' ? this._contWidth : ( this._elWidth * -1 )}px)`;
   }
 
   /**
@@ -418,7 +420,7 @@ class marquee {
       const contHeight = el.clientHeight;
       this._contHeight = contHeight;
 
-      remAttr( marqWrap, 'style' );
+      remAttr( this._marqWrap, 'style' );
 
       el.style.clientHeight = `${contHeight}px`;
 
@@ -446,7 +448,7 @@ class marquee {
       if ( opts.startVisible && !opts.duplicated ) {
         // Compute the complete animation duration and save it for later reference
         // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
-        this._completeDuration = ( elHeight + contHeight) / parseInt( contHeight ) * this._duration;
+        this._completeDuration = ( elHeight + contHeight ) / parseInt( contHeight ) * this._duration; // eslint-disable-line max-len
         opts.duration = elHeight / parseInt( contHeight ) * this._duration;
       } else // formula is to: (Height of the text node + height of the main container / Height of the main container) * duration;
         opts.duration = elHeight / parseInt( contHeight ) / parseInt( contHeight ) * this._duration;
@@ -464,11 +466,11 @@ class marquee {
       if ( opts.startVisible && !opts.duplicated ) {
         // Compute the complete animation duration and save it for later reference
         // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
-        this._completeDuration = ( elWidth + contWidth) / parseInt( contWidth ) * this._duration;
+        this._completeDuration = ( elWidth + contWidth ) / parseInt( contWidth ) * this._duration;
         // (Width of the text node / width of the main container) * duration
         opts.duration = elWidth / parseInt( contWidth ) * this._duration;
       } else // formula is to: (Width of the text node + width of the main container / Width of the main container) * duration;
-        opts.duration = ( elWidth + parseInt( contWidth ) ) / parseInt( contWidth ) * this._duration;
+        opts.duration = ( elWidth + parseInt( contWidth ) ) / parseInt( contWidth ) * this._duration; // eslint-disable-line max-len
     }
 
     // if duplicated then reduce the duration
@@ -548,7 +550,7 @@ class marquee {
       once: true,
     });
 
-    if ( opts.recalcResize )
+    if ( this._opts.recalcResize )
       removeEvent( window, 'resize', this._recalcResize.bind( this ) );
 
   }

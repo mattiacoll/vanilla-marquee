@@ -80,12 +80,6 @@
     "no-lone-blocks": 1,
     "no-loop-func": 1,
     "no-magic-numbers": 0,
-    "no-multi-spaces": [ 1, {
-      "exceptions": {
-        "Property": true,
-        "VariableDeclarator": true
-      }
-    }],
     "no-multi-str": 1,
     "no-new": 1,
     "no-new-func": 1,
