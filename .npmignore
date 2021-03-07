@@ -7,6 +7,7 @@ __tests__/
 .eslintrc.json
 .gitattributes
 .gitignore
+.vscode
 api.md
 babel.config.js
 package-lock.json
