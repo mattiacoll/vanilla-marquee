@@ -554,6 +554,13 @@ class marquee {
 
   }
 
+  /**
+   * Forces a refresh (like recalcResize) but done manually
+   */
+  refresh() {
+    this._recalcResize();
+  }
+
 }
 
 export default marquee;
