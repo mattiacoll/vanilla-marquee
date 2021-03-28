@@ -70,6 +70,7 @@ babel({
 | `resume` | To resume the marquee after being paused previously. |
 | `toggle` | To toggle between `pause` and `resume` methods. |
 | `destroy` | To remove the marquee and all attached events from your element. This method is useful if you are loading/changing the data using Ajax or just another string. You can combine this with the finished event so you can have the marquee show some data and as soon as it finishes showing that, you can destroy it, change the html and then apply the plugin again. |
+| `refresh` | Recalcs the marquee size and position. Works like the `recalcResize` but is triggered manually instead of on window resize |
 
 ## Events:
 

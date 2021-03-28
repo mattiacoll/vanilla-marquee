@@ -30,6 +30,10 @@ declare module "vanilla-marquee" {
          */
         pauseOnHover?: boolean | undefined;
         /**
+         * - Recalculate the marquee position on resize (breaks compatibility with jquery.marquee)
+         */
+        recalcResize?: boolean | undefined;
+        /**
          * - Speed will override duration. Speed allows you to set a relatively constant marquee speed regardless of the width of the containing element. Speed is measured in pixels/second
          */
         speed?: number | undefined;
@@ -50,21 +54,19 @@ declare module "vanilla-marquee" {
          * @param {defaultOptions} opts - the options
          */
         constructor(el: Element, opts: defaultOptions);
+        el: Element;
         _loopCount: number;
         _marqWrap: Element;
-        _contHeight: number | undefined;
-        _elHeight: any;
-        _completeDuration: number | undefined;
-        _contWidth: number | undefined;
-        _elWidth: number | undefined;
+        _vertical: boolean;
+        _duration: number | undefined;
         _opts: defaultOptions;
         _animName: string;
         _animStr: string;
-        el: Element;
         /**
          * Method for animation end event
          */
         _animEnd: () => void;
+        _instance: number;
         /**
          * Build the css string for the animation
          *
@@ -84,6 +86,7 @@ declare module "vanilla-marquee" {
          * @param {Boolean} vertical - Vertical direction
          */
         private _animate;
+        _status: string | undefined;
         /**
          * Event fired on Animation iteration
          *
@@ -103,10 +106,26 @@ declare module "vanilla-marquee" {
          */
         private _repositionHor;
         /**
+         * Calculates the speed and the dimension of the marquee
+         *
+         * @private
+         */
+        private _calcSizes;
+        _contHeight: number | undefined;
+        _elHeight: number | undefined;
+        _completeDuration: number | undefined;
+        _contWidth: number | undefined;
+        _elWidth: number | undefined;
+        /**
+         * Recalculates the dimensions and positon of the marquee on page resize
+         *
+         * @private
+         */
+        private _recalcResize;
+        /**
          * Pause the animation
          */
         pause(): void;
-        _status: string | undefined;
         /**
          * Resume the animation
          */
@@ -119,5 +138,9 @@ declare module "vanilla-marquee" {
          * Destorys the instance and removes events
          */
         destroy(): void;
+        /**
+         * Forces a refresh (like recalcResize) but done manually
+         */
+        refresh(): void;
     }
 }
