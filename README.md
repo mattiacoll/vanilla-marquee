@@ -80,3 +80,12 @@ babel({
 | `finished` | Event will be fired on the element on each iteration of the animation when it finishes. |
 | `paused` | Event will be fired on the element when the animation is paused. |
 | `resumed` | Event will be fired on the element when the animation is resumed. |
+
+## How to contribute
+
+### Prerequisites
+* Install Visual Studio Code https://code.visualstudio.com/
+* Install Github Desktop https://desktop.github.com/
+* Install nodeJS https://nodejs.org
+* Navigate to the project root directory with the command-line.
+* Run ```npm install``` to create the virtual environment.
