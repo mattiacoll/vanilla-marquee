@@ -11,7 +11,7 @@ npm i vanilla-marquee
 ## Usage
 
 ```
-import maqruee from 'vanilla-marquee'
+import marquee from 'vanilla-marquee'
 
 new marquee( element, {
   options
@@ -29,7 +29,7 @@ https://mattiacoll.github.io/vanilla-marquee-site/
 Although this plugin can be a drop in replacment for the jQuery plugin there are some caveats, which may be deal breaking:
 - `allowCss3Support` and `easing` options have been removed (all animations use the @keyframe implementation)
 - `pauseOnCycle` option has been removed, since it was available only when `allowCss3Support` was set to `false`
-- no IE and dead browser support, since we are in $currentYear i don't think it's necessary
+- no IE and dead browser support, since we are in $currentYear I don't think it's necessary
 - this module is not transpiled for old browsers, you can transpile it yourself:
 example with rollup and babel
 ```
@@ -70,7 +70,7 @@ babel({
 | `resume` | To resume the marquee after being paused previously. |
 | `toggle` | To toggle between `pause` and `resume` methods. |
 | `destroy` | To remove the marquee and all attached events from your element. This method is useful if you are loading/changing the data using Ajax or just another string. You can combine this with the finished event so you can have the marquee show some data and as soon as it finishes showing that, you can destroy it, change the html and then apply the plugin again. |
-| `refresh` | Recalcs the marquee size and position. Works like the `recalcResize` but is triggered manually instead of on window resize |
+| `refresh` | Recalcs the marquee size and position. Works like the `recalcResize` but is triggered manually instead of on window resize. |
 
 ## Events:
 
