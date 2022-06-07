@@ -18,3 +18,4 @@ rollup.config.js
 tsconfig.json
 .github
 src
+.editorconfig
