@@ -468,7 +468,7 @@ class marquee {
 
       } else {
         this._repositionHor();
-        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contHeight}px)`;
+        animationCss = `translateX(${( opts.direction === 'left' ) ? -1 * this._elWidth : this._contWidth}px)`;
       }
     }
 
