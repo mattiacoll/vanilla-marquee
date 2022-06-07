@@ -1,17 +1,11 @@
-/**
- * Shorthand for `document.getElementById`
- *
- * @param {String} id - The selector's id
- *
- * @returns {Element|null} - The selected element
- */
+// @ts-check
 /**
  * Shorthand for `document.getElementsByClassName`
  *
  * @param {String} selClass - The selector's class
- * @param {Element} [parent=document] - Parent element
+ * @param {Element|HTMLElement|Document} [parent=document] - Parent element
  *
- * @returns {HTMLCollection} - The selected elements
+ * @returns {HTMLCollectionOf<Element>} - The selected elements
  */
 
 function byClass(selClass, parent = document) {
@@ -21,19 +15,19 @@ function byClass(selClass, parent = document) {
  * Shorthand for `document.querySelector`
  *
  * @param {String} selector - Selector
- * @param {Element} [parent=document] - Parent element
+ * @param {Element|HTMLElement|Document} [parent=document] - Parent element
  *
- * @returns {Element|null} - The selected element
+ * @returns {Element|HTMLElementTagNameMap|SVGElementTagNameMap|null} - The selected element
  */
 
 function query(selector, parent = document) {
   return parent.querySelector(selector);
 }
 /**
- * Shorthand per `document.querySelectorAll`
+ * Shorthand for `document.querySelectorAll`
  *
  * @param {String} selector - Selector
- * @param {Element} [parent=document] - Parent element
+ * @param {Element|HTMLElement|Document} [parent=document] - Parent element
  *
  * @returns {NodeList} - The selected element
  */
@@ -42,27 +36,35 @@ function queryAll(selector, parent = document) {
   return parent.querySelectorAll(selector);
 }
 
+// @ts-check
+
 /**
  * Foreach polyfill for NodeList and HTMLCollection
  * https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
  *
- * @param {Array|NodeList|HTMLCollection} els - A list of elements
+ * @param {Array<any>|NodeList|HTMLCollection} els - A list of elements
  * @param {foreachCB} fn - Callback containing ( value, index ) as arguments
- * @param {Scope} [scope] - Scope
+ * @param {Function} [scope] - Scope
  */
 function forEachHTML(els, fn, scope) {
   for (let i = 0, numEls = els.length; i < numEls; i++) fn.call(scope, els[i], i);
 }
 
+// @ts-check
 /**
  * Shorthand for `element.classList.add`, works with multiple nodes
  *
- * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {Element|HTMLElement|HTMLCollection|NodeList} el - A list of elements
  * @param {...String} classes - Classes to add
  */
 
 function addClass(el, ...classes) {
-  if (el.length === undefined) addClassEl(el, ...classes);else {
+  // @ts-ignore
+  if (el.length === undefined) {
+    // @ts-ignore
+    addClassEl(el, ...classes);
+  } else {
+    // @ts-ignore
     forEachHTML(el, currEl => {
       addClassEl(currEl, ...classes);
     });
@@ -70,9 +72,10 @@ function addClass(el, ...classes) {
   /**
    * Adds classes to a single element
    *
-   * @param {Element} elem - An HTML element
+   * @param {Element|HTMLElement} elem - An HTML element
    * @param {...String} remClass - Classes to add
    */
+
 
   function addClassEl(elem, ...remClass) {
     remClass.forEach(singleClass => {
@@ -81,12 +84,14 @@ function addClass(el, ...classes) {
   }
 }
 
+// @ts-check
+
 /**
  * Shorthand for `element.addEventListener`
  *
- * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {Element|HTMLElement|Window|Document|MediaQueryList} el - A list of elements
  * @param {String} ev - Event's name
- * @param {Function} fn - Event's function
+ * @param {EventListenerOrEventListenerObject} fn - Event's function
  * @param {Object} [opts] - Optional event options
  */
 function addEvent(el, ev, fn, opts) {
@@ -95,9 +100,9 @@ function addEvent(el, ev, fn, opts) {
 /**
  * Shorthand for `element.removeEventListener`
  *
- * @param {Element|HTMLCollection|NodeList} el - A list of elements
+ * @param {Element|HTMLElement|Window|Document|MediaQueryList} el - A list of elements
  * @param {String} ev - Event's name
- * @param {Function} fn - Event's function
+ * @param {EventListenerOrEventListenerObject} fn - Event's function
  * @param {Object} [opts] - Optional event options
  */
 
@@ -105,13 +110,15 @@ function removeEvent(el, ev, fn, opts) {
   el.removeEventListener(ev, fn, opts);
 }
 
+// @ts-check
+
 /**
  * Shorthand for `element.getAttribute`
  *
- * @param {Element} el - An HTML element
+ * @param {Element|HTMLElement} el - An HTML element
  * @param {String} attr - The attribute to retrieve
  *
- * @returns {String} - The attribute's value
+ * @returns {String|null} - The attribute's value
  */
 function getAttr(el, attr) {
   return el.getAttribute(attr);
@@ -119,7 +126,7 @@ function getAttr(el, attr) {
 /**
  * Shorthand for `element.setAttribute`
  *
- * @param {Element} el - An HTML element
+ * @param {Element|HTMLElement} el - An HTML element
  * @param {String} attr - The attribute to retrieve
  * @param {String} val - The value to set to the attribute
  */
@@ -130,7 +137,7 @@ function setAttr(el, attr, val) {
 /**
  * Shorthand for `element.removeAttribute`
  *
- * @param {Element} el - An HTML element
+ * @param {Element|HTMLElement} el - An HTML element
  * @param {String} attr - The attribute to remove
  */
 
@@ -701,4 +708,4 @@ class marquee {
 
 }
 
-export default marquee;
+export { marquee as default };
