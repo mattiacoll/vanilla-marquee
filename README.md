@@ -85,8 +85,6 @@ babel({
 
 ### Prerequisites
 
-* Install Visual Studio Code: https://code.visualstudio.com/
-* Install Github Desktop: https://desktop.github.com/
 * Install nodeJS: https://nodejs.org
 * Switch to the project root directory with the command-line.
 * Run ```npm install``` to install dependencies and create the virtual environment.
