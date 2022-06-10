@@ -1,5 +1,10 @@
 # vanilla-marquee
 
+![Badge](https://img.shields.io/npm/v/vanilla-marquee)
+![Badge](https://img.shields.io/github/license/mattiacoll/vanilla-marquee)
+![Badge](https://img.shields.io/npm/dt/vanilla-marquee)
+![Badge](https://img.shields.io/jsdelivr/npm/hy/vanilla-marquee)
+
 An es5 vanilla-js implementation of [jQuery.marquee](https://github.com/aamirafridi/jQuery.Marquee/)
 
 ## Installation
