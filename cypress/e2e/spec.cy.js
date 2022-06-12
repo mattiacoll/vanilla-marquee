@@ -1,6 +1,6 @@
 describe('Default with text element', () => {
   it('Server started', () => {
-    cy.visit('http://localhost:8080/tests/text.html');
+    cy.visit('http://localhost:8080/cypress/pages/text.html');
   });
 
   it('Has #marquee element and is of width 500px', () => {
