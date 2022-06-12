@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .marquee-wrap {
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      white-space: nowrap;
+    }
+
+    .marquee {
+      width: 500px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="marquee-wrap">
+    <vanilla-marquee>
+      <h1 id="marquee-r" class="marquee">Vanilla marquee is awesome!</h1>
+    </vanilla-marquee>
+  </div>
+  <div class="marquee-wrap">
+    <vanilla-marquee>
+      <h1 id="marquee-u" class="marquee">Vanilla marquee is awesome!</h1>
+    </vanilla-marquee>
+  </div>
+  <div class="marquee-wrap">
+    <vanilla-marquee>
+      <h1 id="marquee-d" class="marquee">Vanilla marquee is awesome!</h1>
+    </vanilla-marquee>
+  </div>
+
+  <h2>jquery versions</h2>
+
+  <!-- jQuery Control -->
+  <div class="marquee-wrap">
+    <h1 id="marquee-jq-r" class="marquee">Vanilla marquee is awesome!</h1>
+  </div>
+  <div class="marquee-wrap">
+    <h1 id="marquee-jq-u" class="marquee">Vanilla marquee is awesome!</h1>
+  </div>
+  <div class="marquee-wrap">
+    <h1 id="marquee-jq-d" class="marquee">Vanilla marquee is awesome!</h1>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" type="text/javascript"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery.marquee@1.5.3/jquery.marquee.min.js" type="text/javascript"></script>
+
+  <script type="module">
+    import marquee from '../../dist/vanilla-marquee.js';
+
+    window.start = () => {
+
+      new marquee( document.getElementById( 'marquee-r' ), {
+        direction: 'right',
+      });
+
+      new marquee( document.getElementById( 'marquee-u' ), {
+        direction: 'up',
+      });
+
+      new marquee( document.getElementById( 'marquee-d' ), {
+        direction: 'down',
+      });
+
+      // Just a visual reference
+      $('#marquee-jq-r').marquee({
+        direction: 'right',
+      });
+
+      $('#marquee-jq-u').marquee({
+        direction: 'up',
+      });
+
+      $('#marquee-jq-d').marquee({
+        direction: 'down',
+      });
+
+    };
+  </script>
+
+</body>
+</html>
