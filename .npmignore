@@ -19,3 +19,4 @@ tsconfig.json
 .github
 src
 .editorconfig
+cypress
