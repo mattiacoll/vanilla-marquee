@@ -53,7 +53,7 @@ babel({
 
 ## Documentation
 
-All the options, methods and events have benn moved to the [Wiki page](https://github.com/mattiacoll/vanilla-marquee/wiki/Documentation)
+All the options, methods and events have been moved to the [Wiki page](https://github.com/mattiacoll/vanilla-marquee/wiki/Documentation)
 
 ## How to contribute
 
