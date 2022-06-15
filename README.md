@@ -14,7 +14,7 @@ npm i vanilla-marquee
 
 ## Usage
 
-```
+```javascript
 import marquee from 'vanilla-marquee'
 
 new marquee( element, {
@@ -36,7 +36,7 @@ Although this plugin can be a drop in replacment for the jQuery plugin there are
 - no IE and dead browser support, since we are in $currentYear I don't think it's necessary
 - this module is not transpiled for old browsers, you can transpile it yourself:
 example with rollup and babel
-```
+```javascript
 babel({
   babelHelpers: 'bundled',
   exclude:      '/node_modules/',
